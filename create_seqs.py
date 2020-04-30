@@ -14,7 +14,7 @@ tokens_start = 0
 # length of words from tokens_start. None = all
 tokens_len = None
 
-n_gram,model_name, in_filename = 40,"alice_botta_40","txt/alice.txt"
+n_gram,model_name, in_filename = 40,"poe_40","txt/poe.txt"
 
 def load_doc(filename):
     file = open(filename,"r")

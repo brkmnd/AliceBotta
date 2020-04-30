@@ -13,22 +13,16 @@ from pickle import load
 from random import randint
 
 # variables
-model_name = "alice_botta_50"
-
-seed_txt_srcs = [ model_name
-                , "seeds/digtedk_julievivre30"
-                , "seeds/digtedk_julievivre50"
-                ]
-# angiv fil der bruges som seed - fra listen ovenover
-seed_src = "alice_botta_50"
+model_name = "alice_botta_40"
+seed_src = "poe_40"
 
 # number of words per text to generate
-n_to_gen = 50
+n_to_gen = 40
 # number of texts to generate
-txt_to_gen = 20
+txt_to_gen = 1
 # custrom seed text to use as generation base
 # if = None, then the original text is used
-custom_seed_txt = None
+#custom_seed_txt = None
 
 # load doc into memory
 def load_doc(filename):
@@ -66,7 +60,7 @@ def generate_seq(model, tokenizer, seq_length, seed_text, n_words):
             # append to input
             in_text += ' ' + out_word
             result.append(out_word)
-	return ' '.join(result)
+	return result
 
 # load sequences into list
 def load_seqs(mname):
@@ -74,13 +68,26 @@ def load_seqs(mname):
     return doc.split("\n")
 
 def get_seed_txt(lines):
-    if custom_seed_txt == None:
-        return lines[randint(0,len(lines))]
-    else:
-        return custom_seed_txt
+    return lines[randint(0,len(lines))]
+
+def create_linebreaks(words):
+    line_min = 3
+    line_max = 8
+    res = ""
+    line_len = randint(line_min,line_max)
+    for w in words:
+        res += w
+        line_len -= 1
+        if line_len == 0:
+            res += "\n"
+            line_len = randint(line_min,line_max)
+        else:
+            res += " "
+    return res
+
 
 # load cleaned text sequences
-lines = load_seqs(custom_seed_src)
+lines = load_seqs(seed_src)
 seq_length = len(lines[0].split()) - 1
 
 # load the model
@@ -93,7 +100,7 @@ print("-------------------------------------")
 print("----model:")
 print(model_name)
 print("----seed text:")
-print(custom_seed_src)
+print(seed_src)
 print("-------------------------------------")
 
 #resultat af genererede tekster der skrives til en fil
@@ -102,8 +109,8 @@ res_to_file = ""
 for i in range(txt_to_gen):
     seed_text = get_seed_txt(lines)
     seed_out = "SEED #"+str(i)+"\n"+seed_text+"\n"
-    gen_text = generate_seq(model, tokenizer, seq_length, seed_text, n_to_gen)
-    gen_out = "GEN #"+str(i)+"\n"+gen_text+ "\n"
+    gen_words = generate_seq(model, tokenizer, seq_length, seed_text, n_to_gen)
+    gen_out = "GEN #"+str(i)+"\n"+create_linebreaks(gen_words)+ "\n"
     all_out = seed_out + gen_out
     print(all_out)
     print("----------------------------------------------------")
