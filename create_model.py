@@ -10,8 +10,11 @@ from keras.layers import Embedding
 
 # model_name must match the sequence txt file name
 # in converse the sequence file must have same name but with added _seqs
-model_name = "alice_botta_50"
+model_name = "alice_botta_40"
 # the n in n-gram has been taken care of when creating sequences.
+
+# raise probably to raise accuracy
+epochs = 100
 
 def load_doc(filename):
     file = open(filename,"r")
@@ -29,7 +32,7 @@ def model_create(file_name):
     # compile model
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     # fit model
-    model.fit(X, y, batch_size=128, epochs=100)
+    model.fit(X, y, batch_size=128, epochs=epochs)
     # save the model to file
     model.save("models/"+file_name+".h5")
     # save the tokenizer
